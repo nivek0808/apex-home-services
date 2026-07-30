@@ -34,3 +34,7 @@ You are required to maintain the `memory-bank/` directory with up-to-date contex
 2. Apply knowledge from previous sessions
 3. Update files as you learn new information
 4. Ensure errors, goals, and environment details are always current
+
+### Design System & UI Instructions
+- Consult `environment.md` under "UI & Design System Specs" for component library hierarchy (`shadcn/ui`, `Magic UI`, `Aceternity UI`), styling constraints, and MCP tool instructions.
+- When adding new UI components or libraries, update `environment.md` to reflect any new dependencies or registry additions.

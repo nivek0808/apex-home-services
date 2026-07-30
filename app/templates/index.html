@@ -1,202 +1,616 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apex Home Services - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Roboto', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#e8eaf6',
+                            100: '#c5cae9',
+                            300: '#7986cb',
+                            500: '#3f51b5',
+                            600: '#303f9f',
+                            700: '#283593',
+                        },
+                        accent: {
+                            500: '#ff6f00',
+                            600: '#ff8f00',
+                        },
+                        surface: {
+                            light: '#ffffff',
+                            dark: '#1e1e2e',
+                        },
+                        background: {
+                            light: '#f5f5f5',
+                            dark: '#121212',
+                        },
+                    },
+                }
+            }
+        }
+    </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; }
-        .header { background: #1e293b; padding: 16px 24px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-size: 20px; color: #38bdf8; }
-        .header .status { font-size: 13px; color: #4ade80; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .stat-card { background: #1e293b; border-radius: 8px; padding: 16px; border: 1px solid #334155; }
-        .stat-card .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-card .value { font-size: 28px; font-weight: 700; margin-top: 4px; }
-        .stat-card .value.green { color: #4ade80; }
-        .stat-card .value.blue { color: #38bdf8; }
-        .stat-card .value.yellow { color: #fbbf24; }
-        .stat-card .value.red { color: #f87171; }
-        .section { background: #1e293b; border-radius: 8px; padding: 20px; margin-bottom: 24px; border: 1px solid #334155; }
-        .section h2 { font-size: 16px; color: #38bdf8; margin-bottom: 16px; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 4px; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px 12px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #e2e8f0; font-size: 14px; }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .btn { padding: 8px 20px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 600; transition: opacity 0.2s; }
-        .btn:hover { opacity: 0.85; }
-        .btn-primary { background: #38bdf8; color: #0f172a; }
-        .btn-success { background: #4ade80; color: #0f172a; }
-        .btn-danger { background: #f87171; color: #0f172a; }
-        .btn-sm { padding: 6px 12px; font-size: 12px; }
-        .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-        .result { background: #0f172a; border-radius: 6px; padding: 12px; margin-top: 12px; font-family: monospace; font-size: 13px; white-space: pre-wrap; max-height: 300px; overflow-y: auto; color: #4ade80; display: none; }
-        .result.visible { display: block; }
-        .integrations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
-        .integration-card { background: #0f172a; border-radius: 6px; padding: 12px; border: 1px solid #334155; }
-        .integration-card .name { font-size: 14px; font-weight: 600; }
-        .integration-card .url { font-size: 11px; color: #64748b; margin-top: 2px; }
-        .integration-card .status { font-size: 12px; margin-top: 6px; font-weight: 600; }
-        .integration-card .status.healthy { color: #4ade80; }
-        .integration-card .status.unhealthy { color: #f87171; }
-        .integration-card .status.degraded { color: #fbbf24; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { text-align: left; padding: 8px; background: #0f172a; color: #94a3b8; font-size: 11px; text-transform: uppercase; }
-        td { padding: 8px; border-top: 1px solid #334155; }
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-        .badge-emergency { background: #7f1d1d; color: #fca5a5; }
-        .badge-new { background: #1e3a5f; color: #93c5fd; }
-        .badge-booked { background: #14532d; color: #86efac; }
-        .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
-        .tab { padding: 8px 16px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; cursor: pointer; font-size: 13px; color: #94a3b8; }
-        .tab.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        /* Base transitions for theme switching */
+        *, *::before, *::after {
+            transition: background-color 0.3s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Material Design elevation shadows */
+        .elevation-1 { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14); }
+        .elevation-2 { box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12); }
+        .elevation-3 { box-shadow: 0 10px 20px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.10); }
+        .elevation-4 { box-shadow: 0 15px 25px rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.05); }
+
+        /* Light theme defaults */
+        [data-theme="light"] body {
+            background: #f5f5f5;
+            color: #212121;
+        }
+        [data-theme="light"] .card {
+            background: #ffffff;
+            color: #212121;
+            border: 1px solid #e0e0e0;
+        }
+        [data-theme="light"] .input-field {
+            background: #fafafa;
+            border: 1px solid #bdbdbd;
+            color: #212121;
+        }
+        [data-theme="light"] .input-field:focus {
+            border-color: #3f51b5;
+            box-shadow: 0 0 0 2px rgba(63,81,181,0.2);
+        }
+        [data-theme="light"] .section-header {
+            color: #212121;
+        }
+        [data-theme="light"] .section-desc {
+            color: #757575;
+        }
+        [data-theme="light"] .label {
+            color: #616161;
+        }
+        [data-theme="light"] .footer-text {
+            color: #9e9e9e;
+        }
+        [data-theme="light"] .stat-value {
+            color: #3f51b5;
+        }
+        [data-theme="light"] .status-online {
+            color: #2e7d32;
+        }
+        [data-theme="light"] .status-offline {
+            color: #c62828;
+        }
+        [data-theme="light"] .result-box {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            color: #2e7d32;
+        }
+
+        /* Dark theme */
+        [data-theme="dark"] body {
+            background: #121212;
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .card {
+            background: #1e1e2e;
+            color: #e0e0e0;
+            border: 1px solid #333355;
+        }
+        [data-theme="dark"] .input-field {
+            background: #2a2a3e;
+            border: 1px solid #444466;
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .input-field:focus {
+            border-color: #7986cb;
+            box-shadow: 0 0 0 2px rgba(121,134,203,0.3);
+        }
+        [data-theme="dark"] .section-header {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .section-desc {
+            color: #9e9e9e;
+        }
+        [data-theme="dark"] .label {
+            color: #b0b0b0;
+        }
+        [data-theme="dark"] .footer-text {
+            color: #757575;
+        }
+        [data-theme="dark"] .stat-value {
+            color: #7986cb;
+        }
+        [data-theme="dark"] .status-online {
+            color: #81c784;
+        }
+        [data-theme="dark"] .status-offline {
+            color: #ef5350;
+        }
+        [data-theme="dark"] .result-box {
+            background: #2a2a3e;
+            border: 1px solid #333355;
+            color: #81c784;
+        }
+        [data-theme="dark"] .pulse-dot {
+            box-shadow: 0 0 6px currentColor;
+        }
+
+        /* Tab system - working properly */
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.2s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Button ripple effect */
+        .btn-material {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .btn-material::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+        .btn-material:active::after {
+            width: 200px;
+            height: 200px;
+        }
+        .btn-material:active {
+            transform: scale(0.97);
+        }
+
+        /* Stat card hover */
+        .stat-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        /* Integration status dots */
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #bdbdbd; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9e9e9e; }
+
+        /* Material Design icons */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
     </style>
 </head>
-<body>
-    <div class="header">
-        <h1>Apex Home Services</h1>
-        <span class="status" id="healthStatus">Checking...</span>
-    </div>
-    <div class="container">
-        <!-- Stats -->
-        <div class="stats-grid" id="statsGrid">
-            <div class="stat-card"><div class="label">Total Leads</div><div class="value blue" id="totalLeads">0</div></div>
-            <div class="stat-card"><div class="label">Active</div><div class="value green" id="activeLeads">0</div></div>
-            <div class="stat-card"><div class="label">Emergencies</div><div class="value red" id="emergencyLeads">0</div></div>
-            <div class="stat-card"><div class="label">Calls</div><div class="value yellow" id="totalCalls">0</div></div>
-            <div class="stat-card"><div class="label">Invoices</div><div class="value blue" id="totalInvoices">0</div></div>
-            <div class="stat-card"><div class="label">Invoiced</div><div class="value green" id="totalInvoiced">$0</div></div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab active" data-tab="voice">Voice Call</div>
-            <div class="tab" data-tab="sms">SMS</div>
-            <div class="tab" data-tab="invoice">Invoice</div>
-            <div class="tab" data-tab="book">Book Slot</div>
-            <div class="tab" data-tab="integrations">Integrations</div>
-        </div>
-
-        <!-- Voice Call Tab -->
-        <div class="tab-content active" id="tab-voice">
-            <div class="section">
-                <h2>Simulate Voice Call</h2>
-                <div class="form-group">
-                    <label>Call Transcript</label>
-                    <textarea id="voiceTranscript" placeholder="e.g., Hi, there's water flooding my basement from the burst pipe. My address is 123 Oak Street. It's an emergency!"></textarea>
+<body class="font-sans min-h-screen">
+    <!-- Header -->
+    <header class="card elevation-2 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-2xl">home</span>
                 </div>
-                <div class="btn-row">
-                    <button class="btn btn-danger" onclick="simulateVoiceCall()">Process Emergency Call</button>
-                    <button class="btn btn-primary" onclick="fillVoiceSample()">Load Sample</button>
+                <div>
+                    <h1 class="text-lg font-bold text-primary-500">Apex Home Services</h1>
+                    <p class="text-xs opacity-70">Automation Dashboard</p>
                 </div>
-                <div class="result" id="voiceResult"></div>
             </div>
-        </div>
-
-        <!-- SMS Tab -->
-        <div class="tab-content" id="tab-sms">
-            <div class="section">
-                <h2>Simulate SMS</h2>
-                <div class="form-group">
-                    <label>Customer Message</label>
-                    <textarea id="smsMessage" placeholder="e.g., Can I reschedule my appointment to next Tuesday?"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Lead ID (optional)</label>
-                    <input type="number" id="smsLeadId" placeholder="1">
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-primary" onclick="simulateSMS()">Generate Auto-Reply</button>
-                </div>
-                <div class="result" id="smsResult"></div>
-            </div>
-        </div>
-
-        <!-- Invoice Tab -->
-        <div class="tab-content" id="tab-invoice">
-            <div class="section">
-                <h2>Parse Vendor Invoice</h2>
-                <div class="form-group">
-                    <label>Raw Invoice Text / OCR</label>
-                    <textarea id="invoiceText" rows="8" placeholder="ACME Plumbing Supply&#10;Invoice #12345&#10;Date: 2026-07-30&#10;PVC Pipe 3in x 10ft - Qty: 5 - $8.00 each&#10;Fitting Elbow 3in - Qty: 3 - $12.50 each&#10;Plumber Tape - Qty: 2 - $3.00 each&#10;Total: $79.00"></textarea>
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-success" onclick="parseInvoice()">Parse & Sync to Ninja</button>
-                </div>
-                <div class="result" id="invoiceResult"></div>
-            </div>
-        </div>
-
-        <!-- Book Slot Tab -->
-        <div class="tab-content" id="tab-book">
-            <div class="section">
-                <h2>Book Appointment Slot</h2>
-                <div class="form-group">
-                    <label>Lead ID</label>
-                    <input type="number" id="bookLeadId" placeholder="1">
-                </div>
-                <div class="form-group">
-                    <label>Preferred Date</label>
-                    <input type="date" id="bookDate">
-                </div>
-                <div class="form-group">
-                    <label>Preferred Time</label>
-                    <input type="time" id="bookTime" value="09:00">
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-primary" onclick="bookSlot()">Book Slot</button>
-                </div>
-                <div class="result" id="bookResult"></div>
-            </div>
-        </div>
-
-        <!-- Integrations Tab -->
-        <div class="tab-content" id="tab-integrations">
-            <div class="section">
-                <h2>Integration Health</h2>
-                <div class="integrations-grid" id="integrationsGrid">
-                    <div class="integration-card"><div class="name">Local LLM</div><div class="url">Checking...</div></div>
-                    <div class="integration-card"><div class="name">Invoice Ninja</div><div class="url">Checking...</div></div>
-                    <div class="integration-card"><div class="name">Cal.com</div><div class="url">Checking...</div></div>
+            <div class="flex items-center gap-4">
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Toggle theme">
+                    <span id="themeIcon" class="material-symbols-outlined text-xl">dark_mode</span>
+                </button>
+                <!-- Refresh -->
+                <button onclick="refreshAll()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Refresh data">
+                    <span class="material-symbols-outlined text-xl">refresh</span>
+                </button>
+                <!-- Status -->
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full border" id="statusBadge">
+                    <span id="statusDot" class="pulse-dot status-offline"></span>
+                    <span id="healthStatus" class="text-sm status-offline">Connecting...</span>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-6">
+        <!-- Stats Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            <div class="stat-card card elevation-1 rounded-lg p-4">
+                <div class="label text-xs font-medium uppercase tracking-wider">Total Leads</div>
+                <div class="stat-value text-3xl font-bold mt-1" id="totalLeads">0</div>
+            </div>
+            <div class="stat-card card elevation-1 rounded-lg p-4">
+                <div class="label text-xs font-medium uppercase tracking-wider">Active</div>
+                <div class="text-3xl font-bold mt-1 text-green-600 dark:text-green-400" id="activeLeads">0</div>
+            </div>
+            <div class="stat-card card elevation-1 rounded-lg p-4">
+                <div class="label text-xs font-medium uppercase tracking-wider">Emergencies</div>
+                <div class="text-3xl font-bold mt-1 text-red-600 dark:text-red-400" id="emergencyLeads">0</div>
+            </div>
+            <div class="stat-card card elevation-1 rounded-lg p-4">
+                <div class="label text-xs font-medium uppercase tracking-wider">Calls</div>
+                <div class="text-3xl font-bold mt-1 text-amber-600 dark:text-amber-400" id="totalCalls">0</div>
+            </div>
+            <div class="stat-card card elevation-1 rounded-lg p-4">
+                <div class="label text-xs font-medium uppercase tracking-wider">Invoices</div>
+                <div class="stat-value text-3xl font-bold mt-1" id="totalInvoices">0</div>
+            </div>
+            <div class="stat-card card elevation-1 rounded-lg p-4">
+                <div class="label text-xs font-medium uppercase tracking-wider">Revenue</div>
+                <div class="text-3xl font-bold mt-1 text-green-600 dark:text-green-400" id="totalInvoiced">$0</div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="card elevation-1 rounded-lg mb-6 overflow-hidden">
+            <div class="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+                <button class="tab-btn active flex-1 min-w-fit px-4 py-3 text-sm font-medium border-b-2 border-primary-500 text-primary-500 flex items-center justify-center gap-2" data-tab="voice">
+                    <span class="material-symbols-outlined text-base">call</span>
+                    Voice Call
+                </button>
+                <button class="tab-btn flex-1 min-w-fit px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center justify-center gap-2" data-tab="sms">
+                    <span class="material-symbols-outlined text-base">sms</span>
+                    SMS
+                </button>
+                <button class="tab-btn flex-1 min-w-fit px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center justify-center gap-2" data-tab="invoice">
+                    <span class="material-symbols-outlined text-base">receipt_long</span>
+                    Invoice
+                </button>
+                <button class="tab-btn flex-1 min-w-fit px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center justify-center gap-2" data-tab="book">
+                    <span class="material-symbols-outlined text-base">event_note</span>
+                    Book Slot
+                </button>
+                <button class="tab-btn flex-1 min-w-fit px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center justify-center gap-2" data-tab="integrations">
+                    <span class="material-symbols-outlined text-base">link</span>
+                    Integrations
+                </button>
+            </div>
+
+            <!-- Tab Content Panels -->
+            <div class="p-6">
+                <!-- Voice Call Tab -->
+                <div id="tab-voice" class="tab-panel active">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl text-primary-500">call</span>
+                        </div>
+                        <div>
+                            <h2 class="section-header text-lg font-semibold">Simulate Voice Call</h2>
+                            <p class="section-desc text-sm">Process a call transcript through the AI dispatcher</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="label block text-sm font-medium mb-2">Call Transcript</label>
+                            <textarea id="voiceTranscript" rows="5" class="input-field w-full rounded-lg p-3 text-sm resize-y" placeholder="Paste the call transcript here..."></textarea>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="simulateVoiceCall()" class="btn-material bg-primary-500 hover:bg-primary-600 text-white font-medium px-6 py-2.5 rounded-lg">
+                                Process Call
+                            </button>
+                            <button onclick="fillVoiceSample()" class="btn-material border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium px-4 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                                Load Sample
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="label text-sm font-medium">Result</span>
+                            <button onclick="clearResult('voiceResult')" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">Clear</button>
+                        </div>
+                        <div id="voiceResult" class="result-box rounded-lg p-4 font-mono text-xs max-h-80 overflow-y-auto hidden"></div>
+                    </div>
+                </div>
+
+                <!-- SMS Tab -->
+                <div id="tab-sms" class="tab-panel">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl text-blue-500">sms</span>
+                        </div>
+                        <div>
+                            <h2 class="section-header text-lg font-semibold">SMS Auto-Responder</h2>
+                            <p class="section-desc text-sm">Generate intelligent auto-replies for customer messages</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="label block text-sm font-medium mb-2">Customer Message</label>
+                            <textarea id="smsMessage" rows="4" class="input-field w-full rounded-lg p-3 text-sm resize-y" placeholder="e.g., Can I reschedule my appointment?"></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label block text-sm font-medium mb-2">Lead ID <span class="text-gray-400 text-xs">(optional)</span></label>
+                                <input type="number" id="smsLeadId" placeholder="1" class="input-field w-full rounded-lg p-3 text-sm">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="simulateSMS()" class="btn-material bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2.5 rounded-lg w-full">
+                                    Generate Reply
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="label text-sm font-medium">Auto-Reply</span>
+                            <button onclick="clearResult('smsResult')" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">Clear</button>
+                        </div>
+                        <div id="smsResult" class="result-box rounded-lg p-4 font-mono text-xs max-h-64 overflow-y-auto hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Invoice Tab -->
+                <div id="tab-invoice" class="tab-panel">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-12 h-12 rounded-full bg-green-50 dark:bg-green-500/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl text-green-600 dark:text-green-400">receipt_long</span>
+                        </div>
+                        <div>
+                            <h2 class="section-header text-lg font-semibold">Invoice Parser</h2>
+                            <p class="section-desc text-sm">Extract structured data from vendor invoices and sync to Ninja</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="label block text-sm font-medium mb-2">Raw Invoice Text / OCR Output</label>
+                            <textarea id="invoiceText" rows="8" class="input-field w-full rounded-lg p-3 text-xs font-mono resize-y" placeholder="ACME Plumbing Supply&#10;Invoice #12345&#10;Date: 2026-07-30&#10;PVC Pipe 3in x 10ft - Qty: 5 - $8.00 each&#10;Total: $79.00"></textarea>
+                        </div>
+                        <button onclick="parseInvoice()" class="btn-material bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2.5 rounded-lg">
+                            Parse & Sync to Invoice Ninja
+                        </button>
+                    </div>
+                    <div class="mt-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="label text-sm font-medium">Parsing Result</span>
+                            <button onclick="clearResult('invoiceResult')" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">Clear</button>
+                        </div>
+                        <div id="invoiceResult" class="result-box rounded-lg p-4 font-mono text-xs max-h-80 overflow-y-auto hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Book Slot Tab -->
+                <div id="tab-book" class="tab-panel">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-12 h-12 rounded-full bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl text-amber-600 dark:text-amber-400">event_note</span>
+                        </div>
+                        <div>
+                            <h2 class="section-header text-lg font-semibold">Book Appointment</h2>
+                            <p class="section-desc text-sm">Schedule a 2-hour appointment window for a customer</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="label block text-sm font-medium mb-2">Lead ID</label>
+                            <input type="number" id="bookLeadId" placeholder="1" class="input-field w-full rounded-lg p-3 text-sm">
+                        </div>
+                        <div>
+                            <label class="label block text-sm font-medium mb-2">Preferred Date</label>
+                            <input type="date" id="bookDate" class="input-field w-full rounded-lg p-3 text-sm">
+                        </div>
+                        <div>
+                            <label class="label block text-sm font-medium mb-2">Preferred Time</label>
+                            <input type="time" id="bookTime" value="09:00" class="input-field w-full rounded-lg p-3 text-sm">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button onclick="bookSlot()" class="btn-material bg-amber-500 hover:bg-amber-600 text-white font-medium px-6 py-2.5 rounded-lg">
+                            Book Appointment
+                        </button>
+                    </div>
+                    <div class="mt-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="label text-sm font-medium">Booking Result</span>
+                            <button onclick="clearResult('bookResult')" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">Clear</button>
+                        </div>
+                        <div id="bookResult" class="result-box rounded-lg p-4 font-mono text-xs max-h-64 overflow-y-auto hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Integrations Tab -->
+                <div id="tab-integrations" class="tab-panel">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-12 h-12 rounded-full bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl text-purple-600 dark:text-purple-400">link</span>
+                        </div>
+                        <div>
+                            <h2 class="section-header text-lg font-semibold">Integration Health</h2>
+                            <p class="section-desc text-sm">Monitor the status of all connected services</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="card elevation-1 rounded-lg p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <span class="font-semibold">AI Assistant</span>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="googleAiDesc">Google AI Studio</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="googleAiStatus" class="pulse-dot bg-red-400"></span>
+                                    <span id="googleAiStatusText" class="text-xs text-red-500">Offline</span>
+                                </div>
+                            </div>
+                            <div id="googleAiUrl" class="text-xs text-gray-500 dark:text-gray-400">Initializing...</div>
+                        </div>
+                        <div class="card elevation-1 rounded-lg p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <span class="font-semibold">Invoice Ninja</span>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="invoiceNinjaDesc">Invoice & billing management</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="invoiceNinjaStatus" class="pulse-dot bg-red-400"></span>
+                                    <span id="invoiceNinjaStatusText" class="text-xs text-red-500">Offline</span>
+                                </div>
+                            </div>
+                            <div id="invoiceNinjaUrl" class="text-xs text-gray-500 dark:text-gray-400">Initializing...</div>
+                        </div>
+                        <div class="card elevation-1 rounded-lg p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <span class="font-semibold">Calendar</span>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="calcomDesc">Appointment scheduling</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="calcomStatus" class="pulse-dot bg-red-400"></span>
+                                    <span id="calcomStatusText" class="text-xs text-red-500">Offline</span>
+                                </div>
+                            </div>
+                            <div id="calcomUrl" class="text-xs text-gray-500 dark:text-gray-400">Initializing...</div>
+                        </div>
+                        <div class="card elevation-1 rounded-lg p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <span class="font-semibold">n8n Automation</span>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="n8nDesc">Workflow automation hub</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="n8nStatus" class="pulse-dot bg-red-400"></span>
+                                    <span id="n8nStatusText" class="text-xs text-red-500">Offline</span>
+                                </div>
+                            </div>
+                            <div id="n8nUrl" class="text-xs text-gray-500 dark:text-gray-400">Initializing...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Storage Info -->
+                    <div class="mt-6 card elevation-1 rounded-lg p-5 bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-800">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="material-symbols-outlined text-2xl text-blue-600 dark:text-blue-400">storage</span>
+                            <h3 class="text-lg font-semibold">Where Your Data Is Stored</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <strong class="text-blue-700 dark:text-blue-300">App Dashboard</strong>
+                                <p class="text-gray-600 dark:text-gray-400 mt-1">Leads, calls, and invoices are stored in a local SQLite database on this server.</p>
+                            </div>
+                            <div>
+                                <strong class="text-blue-700 dark:text-blue-300">Invoice Ninja</strong>
+                                <p class="text-gray-600 dark:text-gray-400 mt-1">Your actual billing data and client records are kept in Invoice Ninja's database.</p>
+                            </div>
+                            <div>
+                                <strong class="text-blue-700 dark:text-blue-300">Cal.com</strong>
+                                <p class="text-gray-600 dark:text-gray-400 mt-1">Appointment schedules and booking information are stored in Cal.com's database.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 dark:border-gray-700 mt-8">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center text-xs text-gray-400">
+            <span>Apex Home Services • Automation Sandbox</span>
+            <span id="lastUpdate">Last updated: never</span>
+        </div>
+    </footer>
 
     <script>
         const API = window.location.origin;
 
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        // ===== THEME TOGGLE =====
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            document.getElementById('themeIcon').textContent = next === 'light' ? 'dark_mode' : 'light_mode';
+            localStorage.setItem('theme', next);
+        }
+
+        // Load saved theme
+        (function() {
+            const saved = localStorage.getItem('theme');
+            if (saved) {
+                document.documentElement.setAttribute('data-theme', saved);
+                document.getElementById('themeIcon').textContent = saved === 'light' ? 'dark_mode' : 'light_mode';
+            }
+        })();
+
+        // ===== TAB SYSTEM =====
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active from all buttons and panels
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('border-primary-500', 'text-primary-500', 'active');
+                    b.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                });
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+                // Activate clicked tab
+                btn.classList.add('border-primary-500', 'text-primary-500', 'active');
+                btn.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
             });
         });
 
-        // Health check
+        // ===== HEALTH CHECK =====
         async function checkHealth() {
             try {
                 const r = await fetch(API + '/health');
                 const d = await r.json();
-                document.getElementById('healthStatus').textContent = d.status === 'healthy' ? '● Online' : '● Offline';
-                document.getElementById('healthStatus').style.color = d.status === 'healthy' ? '#4ade80' : '#f87171';
+                const dot = document.getElementById('statusDot');
+                const status = document.getElementById('healthStatus');
+                if (d.status === 'healthy') {
+                    dot.className = 'pulse-dot status-online';
+                    status.textContent = 'Online';
+                    status.className = 'text-sm status-online';
+                } else {
+                    dot.className = 'pulse-dot status-offline';
+                    status.textContent = 'Offline';
+                    status.className = 'text-sm status-offline';
+                }
             } catch {
-                document.getElementById('healthStatus').textContent = '● Offline';
-                document.getElementById('healthStatus').style.color = '#f87171';
+                document.getElementById('statusDot').className = 'pulse-dot status-offline';
+                document.getElementById('healthStatus').textContent = 'Offline';
+                document.getElementById('healthStatus').className = 'text-sm status-offline';
             }
         }
 
-        // Load stats
+        // ===== LOAD STATS =====
         async function loadStats() {
             try {
-                const r = await fetch(API + '/api/dashboard/stats');
+                const r = await fetch(API + '/dashboard/stats');
                 const d = await r.json();
                 document.getElementById('totalLeads').textContent = d.leads.total;
                 document.getElementById('activeLeads').textContent = d.leads.active;
@@ -204,35 +618,52 @@
                 document.getElementById('totalCalls').textContent = d.calls.total;
                 document.getElementById('totalInvoices').textContent = d.invoices.total;
                 document.getElementById('totalInvoiced').textContent = d.invoices.total_amount;
+                document.getElementById('lastUpdate').textContent = 'Updated: ' + new Date().toLocaleTimeString();
 
-                // Integrations
-                const grid = document.getElementById('integrationsGrid');
-                grid.innerHTML = '';
-                for (const [name, info] of Object.entries(d.integrations)) {
-                    const card = document.createElement('div');
-                    card.className = 'integration-card';
-                    card.innerHTML = `
-                        <div class="name">${name.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
-                        <div class="url">${info.url}</div>
-                        <div class="status ${info.status}">● ${info.status}</div>
-                    `;
-                    grid.appendChild(card);
+                // Update integration statuses
+                for (const [key, info] of Object.entries(d.integrations)) {
+                    const dot = document.getElementById(key + 'Status');
+                    const text = document.getElementById(key + 'StatusText');
+                    const urlEl = document.getElementById(key + 'Url');
+                    const descEl = document.getElementById(key + 'Desc');
+                    
+                    if (dot) {
+                        dot.className = 'pulse-dot ' + (info.status === 'healthy' ? 'bg-green-500' : info.status === 'degraded' ? 'bg-amber-500' : 'bg-red-400');
+                    }
+                    if (text) {
+                        text.textContent = info.status.charAt(0).toUpperCase() + info.status.slice(1);
+                        text.className = 'text-xs ' + (info.status === 'healthy' ? 'text-green-600 dark:text-green-400' : info.status === 'degraded' ? 'text-amber-600 dark:text-amber-400' : 'text-red-500');
+                    }
+                    if (urlEl) {
+                        // Show description if available, otherwise fall back to URL
+                        urlEl.textContent = info.description || info.url || 'Available';
+                    }
+                    if (descEl) {
+                        descEl.textContent = info.description || 'Configured';
+                    }
                 }
             } catch (e) {
                 console.error('Stats load failed:', e);
             }
         }
 
+        // ===== HELPERS =====
         function showResult(id, data) {
             const el = document.getElementById(id);
             el.textContent = JSON.stringify(data, null, 2);
-            el.classList.add('visible');
+            el.classList.remove('hidden');
         }
 
-        // Voice call
+        function clearResult(id) {
+            const el = document.getElementById(id);
+            el.textContent = '';
+            el.classList.add('hidden');
+        }
+
+        // ===== ACTIONS =====
         async function simulateVoiceCall() {
             const transcript = document.getElementById('voiceTranscript').value;
-            if (!transcript) return alert('Enter a transcript');
+            if (!transcript) return alert('Please enter a transcript');
             try {
                 const r = await fetch(API + '/api/simulator/voice-call', {
                     method: 'POST',
@@ -251,11 +682,10 @@
                 'My name is John Smith and my phone number is 555-123-4567.';
         }
 
-        // SMS
         async function simulateSMS() {
             const msg = document.getElementById('smsMessage').value;
             const leadId = document.getElementById('smsLeadId').value || null;
-            if (!msg) return alert('Enter a message');
+            if (!msg) return alert('Please enter a message');
             try {
                 const r = await fetch(API + '/api/simulator/sms', {
                     method: 'POST',
@@ -266,10 +696,9 @@
             } catch (e) { alert('Error: ' + e.message); }
         }
 
-        // Invoice
         async function parseInvoice() {
             const text = document.getElementById('invoiceText').value;
-            if (!text) return alert('Enter invoice text');
+            if (!text) return alert('Please enter invoice text');
             try {
                 const r = await fetch(API + '/api/simulator/invoice-parse', {
                     method: 'POST',
@@ -281,12 +710,11 @@
             } catch (e) { alert('Error: ' + e.message); }
         }
 
-        // Book slot
         async function bookSlot() {
             const leadId = document.getElementById('bookLeadId').value;
             const date = document.getElementById('bookDate').value;
             const time = document.getElementById('bookTime').value;
-            if (!leadId || !date) return alert('Enter lead ID and date');
+            if (!leadId || !date) return alert('Please enter lead ID and date');
             try {
                 const r = await fetch(API + '/api/simulator/book-slot', {
                     method: 'POST',
@@ -296,6 +724,11 @@
                 showResult('bookResult', await r.json());
                 loadStats();
             } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        function refreshAll() {
+            loadStats();
+            checkHealth();
         }
 
         // Init

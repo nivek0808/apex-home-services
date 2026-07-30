@@ -2,21 +2,13 @@
 
 ## Known Issues & Resolutions
 
-### No Errors Yet
-*This file will be updated as recurring errors are encountered during development and deployment.*
+### [Stats Endpoint Routing Mismatch]
+- **Date Encountered:** 2026-07-30
+- **Error Description:** Dashboard frontend calls `/api/dashboard/stats` but the FastAPI router mounts it at `/dashboard/stats` (no `/api` prefix)
+- **Root Cause:** `invoices.py` router uses `router = APIRouter(tags=["invoices"])` without prefix, but frontend JavaScript assumed `/api/` prefix like other endpoints
+- **Resolution:** Updated `index.html` to fetch from `/dashboard/stats` instead of `/api/dashboard/stats`
+- **Status:** Fixed
 
 ---
 
-#### Format for Logging Errors
-
-```
-### [Error Title]
-- **Date Encountered:** YYYY-MM-DD
-- **Error Description:** What happened
-- **Root Cause:** Why it happened
-- **Resolution:** How it was fixed
-- **Status:** Fixed / Workaround / Open
-```
-
----
-*Last updated: 2026-07-30 - File initialized, no errors recorded yet*
+*Last updated: 2026-07-30 - Stats endpoint routing fixed*

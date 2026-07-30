@@ -1,18 +1,26 @@
 """Apex Home Services - FastAPI Application Entry Point."""
 
 import logging
+import os
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.config import settings
 from app.database import init_db
 from app.routers import simulator, vapi_webhooks, messaging_webhooks, invoices
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+# Load environment variables from .env file (project root)
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+load_dotenv(dotenv_path)
 
 
 @asynccontextmanager

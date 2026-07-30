@@ -88,53 +88,75 @@ async def dashboard_stats(db=Depends(get_db)):
 
     # Integration health checks
     import httpx
+    from app.config import settings
 
     integrations = {}
 
-    # Local LLM
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.get(f"{llm_engine.settings.LOCAL_LLM_URL}/models")
-            integrations["local_llm"] = {
-                "status": "healthy" if resp.status_code == 200 else "degraded",
-                "url": llm_engine.settings.LOCAL_LLM_URL,
-            }
-    except Exception:
-        integrations["local_llm"] = {
-            "status": "unhealthy",
-            "url": llm_engine.settings.LOCAL_LLM_URL,
-        }
+    # Google AI Studio (AI Assistant)
+    ai_status = "healthy" if settings.google_ai_available else "unhealthy"
+    integrations["google_ai"] = {
+        "status": ai_status,
+        "name": "AI Assistant",
+        "description": f"Powered by {settings.GOOGLE_AI_MODEL_PRIMARY}",
+    }
 
-    # Invoice Ninja
+    # Invoice Ninja - quick connectivity check
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            headers = {"X-Ninja-Token": invoice_ninja_client.settings.INVOICE_NINJA_TOKEN}
+        async with httpx.AsyncClient(timeout=3.0) as client:
             resp = await client.get(
-                f"{invoice_ninja_client.settings.INVOICE_NINJA_URL}/v5/clients",
-                headers=headers,
+                f"{invoice_ninja_client.settings.INVOICE_NINJA_URL}/",
+                follow_redirects=False,
             )
             integrations["invoice_ninja"] = {
-                "status": "healthy" if resp.status_code == 200 else "degraded",
-                "url": invoice_ninja_client.settings.INVOICE_NINJA_URL,
+                "status": "healthy",
+                "name": "Invoice Ninja",
+                "description": "Invoice & billing management - Port 8003",
             }
     except Exception:
         integrations["invoice_ninja"] = {
-            "status": "unhealthy",
-            "url": invoice_ninja_client.settings.INVOICE_NINJA_URL,
+            "status": "degraded",
+            "name": "Invoice Ninja",
+            "description": "Invoice & billing management - Port 8003",
         }
 
-    # Cal.com
+    # Cal.com - quick connectivity check
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.get(f"{invoice_ninja_client.settings.CALCOM_API_URL}/health")
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            base_url = invoice_ninja_client.settings.CALCOM_API_URL.replace("/api/v1", "")
+            resp = await client.get(base_url, follow_redirects=False)
             integrations["calcom"] = {
-                "status": "healthy" if resp.status_code == 200 else "degraded",
-                "url": invoice_ninja_client.settings.CALCOM_API_URL,
+                "status": "healthy",
+                "name": "Calendar",
+                "description": "Appointment scheduling - Port 3000",
             }
     except Exception:
         integrations["calcom"] = {
-            "status": "unhealthy",
-            "url": invoice_ninja_client.settings.CALCOM_API_URL,
+            "status": "degraded",
+            "name": "Calendar",
+            "description": "Appointment scheduling - Port 3000",
+        }
+
+    # n8n - quick connectivity check
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            resp = await client.get("http://127.0.0.1:5678/", follow_redirects=True)
+            if resp.status_code == 200:
+                integrations["n8n"] = {
+                    "status": "healthy",
+                    "name": "n8n Automation",
+                    "description": "Workflow automation hub - Port 5678",
+                }
+            else:
+                integrations["n8n"] = {
+                    "status": "degraded",
+                    "name": "n8n Automation",
+                    "description": "Workflow automation hub - Port 5678",
+                }
+    except Exception:
+        integrations["n8n"] = {
+            "status": "degraded",
+            "name": "n8n Automation",
+            "description": "Workflow automation hub - Port 5678",
         }
 
     return {

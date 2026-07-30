@@ -1,0 +1,89 @@
+services:
+  # Invoice Ninja - Invoice & billing management (PHP-FPM + nginx)
+  invoice-ninja:
+    image: apex-invoice-ninja:custom
+    container_name: apex-invoice-ninja
+    ports:
+      - "8003:80"
+    environment:
+      APP_URL: http://localhost:8003
+      APP_PORT: "8000"
+      APP_KEY: base64:qXU/+brqdUme4wjqpkwR2kJpRyI7cmlEm6OjMXOCTbU=
+      DB_HOST: mysql-db
+      DB_DATABASE: invoiceninja
+      DB_USERNAME: ninja
+      DB_PASSWORD: ninja_password
+      REQUIRE_HTTPS: false
+      AUTO_UPDATE: false
+    depends_on:
+      - mysql-db
+    restart: unless-stopped
+
+  # MySQL database for Invoice Ninja
+  mysql-db:
+    image: mysql:8.0
+    container_name: apex-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: invoiceninja
+      MYSQL_USER: ninja
+      MYSQL_PASSWORD: ninja_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+  # n8n - Workflow automation for connecting services
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:1.26.0
+    container_name: apex-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=apex_n8n_2026
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+    volumes:
+      - n8n_data:/home/node/.n8n
+    restart: unless-stopped
+
+  # Cal.com - Appointment scheduling
+  cal-com:
+    image: calcom/cal.com:latest
+    container_name: apex-cal-com
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://caluser:caldbpass@postgres-db:5432/cal
+      - DATABASE_DIRECT_URL=postgresql://caluser:caldbpass@postgres-db:5432/cal
+      - NEXTAUTH_SECRET=cal_nextauth_secret_2026
+      - CALENDSO_ENCRYPTION_KEY=cal_encryption_key_2026_secret
+      - NEXT_PUBLIC_CALCOM_API_KEY=cal_api_key_2026
+      - EMAIL_FROM=test@apex.local
+      - EMAIL_SERVER_HOST=smtp.gmail.com
+      - EMAIL_SERVER_PORT=587
+      - EMAIL_SERVER_USER=
+      - EMAIL_SERVER_PASSWORD=
+      - NEXT_PUBLIC_BASE_URL=http://localhost:3000
+    depends_on:
+      - postgres-db
+    restart: unless-stopped
+
+  # PostgreSQL database for Cal.com
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: apex-postgres
+    environment:
+      POSTGRES_USER: caluser
+      POSTGRES_PASSWORD: caldbpass
+      POSTGRES_DB: cal
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  n8n_data:
+  postgres_data:
