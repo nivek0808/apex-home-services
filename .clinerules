@@ -1,0 +1,36 @@
+# ClineRules - Apex Home Services
+
+## Memory Bank Management
+
+You are required to maintain the `memory-bank/` directory with up-to-date context files. These files serve as persistent memory across sessions.
+
+### Memory Bank Files
+
+1. **`memory-bank/goals.md`** - Project goals, milestones, and current objectives
+   - Update when: A goal is achieved, a new goal is added, or goals are changed/prioritized
+   - Always mark completed goals with `[x]` and add new goals with `[ ]`
+
+2. **`memory-bank/errors.md`** - Recurring errors, known issues, and their resolutions
+   - Update when: A consistent/recurring error pattern is identified
+   - Document: Error description, root cause, resolution, and date encountered
+
+3. **`memory-bank/environment.md`** - Operating environment details and discoveries
+   - Update when: New environment details are discovered (e.g., Proxmox LXC, available tools, network config)
+   - Document: OS, available software, network topology, container details, etc.
+
+### Update Rules
+
+- **Always check existing memory bank files** before starting work on a new task
+- **Update relevant files** when you encounter:
+  - New consistent errors or error patterns
+  - Goal completions or changes
+  - Environment discoveries
+- **Keep files concise but comprehensive** - they are your persistent memory
+- **Reference memory bank files** at the start of each session to maintain context
+
+### Session Workflow
+
+1. At session start, read all `memory-bank/*.md` files
+2. Apply knowledge from previous sessions
+3. Update files as you learn new information
+4. Ensure errors, goals, and environment details are always current
